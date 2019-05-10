@@ -51,6 +51,7 @@ CREATE TABLE appointments (
     user_id UUID NOT NULL,
     service_id UUID NOT NULL,
     appointment_datetime TIMESTAMPTZ NOT NULL,
+    duration INTERVAL NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
     UNIQUE(contractor_id, user_id, service_id, appointment_datetime),
     FOREIGN KEY (contractor_id) REFERENCES contractors(id)
@@ -61,11 +62,13 @@ CREATE TABLE appointments (
         ON DELETE SET NULL -- Do not delete scheduled appointment if a service is removed - potential for abuse
 );
 
-CREATE FUNCTION check_valid_appt(appt_start TIMESTAMPTZ, appt_duration INTERVAL, new_start TIMESTAMPTZ, new_duration INTERVAL) 
-    RETURNS BOOLEAN
-    BEGIN -- Check if appt being inserted falls within range of an existing appointment
-        RETURN appt_start <= (new_start + new_duration) AND (appt_start + appt_duration) >= new_start
-    END
+SELECT * FROM schedules -- Query to check if appointment falls within availability 
+WHERE contractor_id = ${contractor_id}
+AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
+
+SELECT * FROM appointments -- Query to check existing appointments 
+WHERE contractor_id = ${contractor_id}
+AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
 
 DELETE FROM appointments -- Run on a schedule, cron job?
     WHERE appointment_datetime < (now() - INTERVAL '30 DAYS')
