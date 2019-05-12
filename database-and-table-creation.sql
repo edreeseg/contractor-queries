@@ -6,7 +6,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE contractors (
     id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    phone_number VARCHAR(15) NOT NULL UNIQUE,
+    phone_number VARCHAR(30) NOT NULL UNIQUE,
     street_address VARCHAR(50) NOT NULL,
     city VARCHAR(25) NOT NULL,
     state_abbr VARCHAR(2) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE schedules (
 CREATE TABLE users (
     id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(170) NOT NULL UNIQUE,
     email VARCHAR(50) NOT NULL UNIQUE,
     contractor_id UUID DEFAULT NULL,
     created_at TIMESTAMP DEFAULT now(),
