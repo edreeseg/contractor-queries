@@ -3,7 +3,8 @@ CREATE DATABASE contractor_scheduler_test;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE contractors (
+CREATE TABLE contractors
+(
     id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     phone_number VARCHAR(30) NOT NULL UNIQUE,
@@ -14,7 +15,8 @@ CREATE TABLE contractors (
     created_at TIMESTAMP DEFAULT now()
 );
 
-CREATE TABLE schedules (
+CREATE TABLE schedules
+(
     contractor_id UUID NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
     duration INTERVAL NOT NULL,
@@ -24,7 +26,8 @@ CREATE TABLE schedules (
         ON DELETE CASCADE
 );
 
-CREATE TABLE users (
+CREATE TABLE users
+(
     id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(170) NOT NULL UNIQUE,
@@ -35,7 +38,8 @@ CREATE TABLE users (
         ON DELETE CASCADE
 );
 
-CREATE TABLE services (
+CREATE TABLE services
+(
     id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     price MONEY DEFAULT NULL,
@@ -45,7 +49,8 @@ CREATE TABLE services (
         ON DELETE CASCADE
 );
 
-CREATE TABLE appointments (
+CREATE TABLE appointments
+(
     id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
     contractor_id UUID NOT NULL,
     user_id UUID NOT NULL,
@@ -59,16 +64,31 @@ CREATE TABLE appointments (
     FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE,
     FOREIGN KEY (service_id) REFERENCES services(id)
-        ON DELETE SET NULL -- Do not delete scheduled appointment if a service is removed - potential for abuse
+        ON DELETE SET NULL
+    -- Do not delete scheduled appointment if a service is removed - potential for abuse
 );
 
-SELECT * FROM schedules -- Query to check if appointment falls within availability 
-WHERE contractor_id = ${contractor_id}
-AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
+CREATE TABLE feedback
+(
+    id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID NOT NULL,
+    contractor_id UUID NOT NULL,
+    stars INT NOT NULL,
+    message VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE SET NULL,
+    FOREIGN KEY (contractor_id) REFERENCES contractors(id)
+        ON DELETE SET NULL
+);
 
-SELECT * FROM appointments -- Query to check existing appointments 
-WHERE contractor_id = ${contractor_id}
-AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
+-- SELECT * FROM schedules -- Query to check if appointment falls within availability 
+-- WHERE contractor_id = ${contractor_id}
+-- AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
 
-DELETE FROM appointments -- Run on a schedule, cron job?
-    WHERE appointment_datetime < (now() - INTERVAL '30 DAYS')
+-- SELECT * FROM appointments -- Query to check existing appointments 
+-- WHERE contractor_id = ${contractor_id}
+-- AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
+
+-- DELETE FROM appointments -- Run on a schedule, cron job?
+--     WHERE appointment_datetime < (now() - INTERVAL '30 DAYS')
