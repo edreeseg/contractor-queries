@@ -99,10 +99,5 @@ CREATE TABLE feedback
 -- WHERE contractor_id = ${contractor_id}
 -- AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
 
-<<<<<<< HEAD
 DELETE FROM appointments -- Run on a schedule, cron job?
     WHERE appointment_datetime < (NOW() - INTERVAL '30 DAYS')
-=======
--- DELETE FROM appointments -- Run on a schedule, cron job?
---     WHERE appointment_datetime < (now() - INTERVAL '30 DAYS')
->>>>>>> bbcf396658c6f108e2902e5e78f899f678918991
