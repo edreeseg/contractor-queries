@@ -77,20 +77,6 @@ CREATE TABLE feedback (
   ON DELETE SET NULL
 ); 
 
-CREATE TABLE feedback
-(
-    id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID NOT NULL,
-    contractor_id UUID NOT NULL,
-    stars INT NOT NULL,
-    message VARCHAR(200) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE SET NULL,
-    FOREIGN KEY (contractor_id) REFERENCES contractors(id)
-        ON DELETE SET NULL
-);
-
 -- SELECT * FROM schedules -- Query to check if appointment falls within availability 
 -- WHERE contractor_id = ${contractor_id}
 -- AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
