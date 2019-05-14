@@ -77,13 +77,32 @@ CREATE TABLE feedback (
   ON DELETE SET NULL
 ); 
 
-SELECT * FROM schedules -- Query to check if appointment falls within availability 
-WHERE contractor_id = ${contractor_id}
-AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
+CREATE TABLE feedback
+(
+    id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID NOT NULL,
+    contractor_id UUID NOT NULL,
+    stars INT NOT NULL,
+    message VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE SET NULL,
+    FOREIGN KEY (contractor_id) REFERENCES contractors(id)
+        ON DELETE SET NULL
+);
 
-SELECT * FROM appointments -- Query to check existing appointments 
-WHERE contractor_id = ${contractor_id}
-AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
+-- SELECT * FROM schedules -- Query to check if appointment falls within availability 
+-- WHERE contractor_id = ${contractor_id}
+-- AND (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time};
 
+-- SELECT * FROM appointments -- Query to check existing appointments 
+-- WHERE contractor_id = ${contractor_id}
+-- AND NOT (start_time <= (${start_time} + ${duration}) AND (start_time + duration) >= ${start_time});
+
+<<<<<<< HEAD
 DELETE FROM appointments -- Run on a schedule, cron job?
     WHERE appointment_datetime < (NOW() - INTERVAL '30 DAYS')
+=======
+-- DELETE FROM appointments -- Run on a schedule, cron job?
+--     WHERE appointment_datetime < (now() - INTERVAL '30 DAYS')
+>>>>>>> bbcf396658c6f108e2902e5e78f899f678918991
