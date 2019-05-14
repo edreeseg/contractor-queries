@@ -13,6 +13,15 @@ CREATE TABLE IF NOT EXISTS contractors (
   zip_code VARCHAR(10) NOT NULL,
   created_at TIMESTAMP DEFAULT NOW()
 );
+
+CREATE INDEX IX_contractors_state_abbr
+ON contractors (state_abbr);
+
+CREATE INDEX IX_contractors_city
+ON contractors (city);
+
+CREATE INDEX IX_contractors_zip_code
+ON contractors (zip_code);
     
 CREATE TABLE IF NOT EXISTS schedules (
   contractor_id UUID NOT NULL,
@@ -24,6 +33,9 @@ CREATE TABLE IF NOT EXISTS schedules (
   FOREIGN KEY (contractor_id) REFERENCES contractors(id)
   ON DELETE CASCADE
 );
+
+CREATE INDEX IX_schedules_start_time
+ON schedules (start_time);
     
 CREATE TABLE IF NOT EXISTS users (
   id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -36,6 +48,9 @@ CREATE TABLE IF NOT EXISTS users (
   FOREIGN KEY (contractor_id) REFERENCES contractors(id)
   ON DELETE CASCADE
 );
+
+CREATE INDEX IX_users_cID
+ON users (contractor_id);
  
 CREATE TABLE IF NOT EXISTS services (
   id UUID NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -46,6 +61,12 @@ CREATE TABLE IF NOT EXISTS services (
   FOREIGN KEY (contractor_id) REFERENCES contractors(id)
   ON DELETE CASCADE
 );
+
+CREATE INDEX IX_services_name
+ON services (name ASC);
+
+CREATE INDEX IX_services_price
+ON services (price ASC);
     
 CREATE TABLE IF NOT EXISTS appointments (
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -63,6 +84,9 @@ CREATE TABLE IF NOT EXISTS appointments (
   FOREIGN KEY (service_id) REFERENCES services(id)
   ON DELETE SET NULL
 );
+
+CREATE INDEX IX_appointments_datetime
+ON appointments (appointment_datetime);
     
 CREATE TABLE feedback (
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4() PRIMARY KEY,
